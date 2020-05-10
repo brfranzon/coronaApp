@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css' rel='stylesheet' />
+	<script src='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js'></script>
+	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+		integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+	<title>Document</title>
+</head>
+
+<body>
+
+	<div id='map' class="map">
+		<div id = "select">
+			<select id="country-list" class="mdb-select md-form colorful-select dropdown-danger">
+				<option value=""> <span> Choose your country </span></option>
+			</select>
+		</div>
+
+		<!--!  <div class="data-container" id="data-container">
+		<div class="stats-container">
+			<h4>Cases</h4>
+			<h1 id="cases"></h1>
+			<h4>Deaths</h4>
+			<h1 id="deaths"></h1>
+			<h4>% of Deaths</h4>
+			<h1 id="percent"></h1>
+		</div>
+		<div class="location-container">
+			<h4>Country</h4>
+			<h1 id="country"></h1>
+			<h4>Population</h4>
+			<h1 id="population"></h1>
+			<h4>Last Updated</h4>
+			<h1 id="update"></h1>
+		</div>
+	</div>  
+	</div>-->
+
+		<div class="data-container" id="data-container">
+			<div class="card bg-secondary" style="width: 18rem;">
+				<div class="card-body">
+					<h1 class="card-title" id="card-country"></h1>
+
+					<h4>Cases</h4>
+					<h1 id="cases"></h1>
+					<h4>Deaths</h4>
+					<h1 id="deaths"></h1>
+					<h4>% of Deaths</h4>
+					<h1 id="percent"></h1>
+
+				</div>
+			</div>
+		</div>
+
+
+
+		<script src="script.js"></script>
+</body>
+
+</html>
