@@ -11,6 +11,7 @@
 
 }
 
+
 #select{
     position: absolute;
     width: 100%;
@@ -30,8 +31,6 @@
     opacity: 0.6;
     font-weight: bolder;
 }
-
-
 
 .data-container{
     position: absolute;
