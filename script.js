@@ -2,7 +2,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiYnJmcmFuem9uLTg3IiwiYSI6ImNrOXhqanI3NzAxc24zZ
 var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/dark-v10',
-    zoom: 2.2,
+    zoom: 2,
     center: [0, 20]
 });
 
@@ -16,8 +16,6 @@ fetch(url).
     then(res => { return res.json() }).
     then(data => {
 
-        console.log(Object.keys(data.data))
-
         /** Populate the Options*/
         for (let j = 0; j < data.data.length; j++) {
 
@@ -30,15 +28,15 @@ fetch(url).
         }
 
 
-
         /** Event Selection option und show data*/
         country_list.addEventListener("change", changeCountry);
 
         function changeCountry() {
+            console.log(data.data[country_list.value].location)
 
             map.fitBounds([
-                [data.data[country_list.value].longitude + 5, data.data[country_list.value].latitude + 5],
-                [data.data[country_list.value].longitude - 5, data.data[country_list.value].latitude - 5]
+                [data.data[country_list.value].longitude + 10, data.data[country_list.value].latitude + 10],
+                [data.data[country_list.value].longitude + 10, data.data[country_list.value].latitude - 10]
             ]);
 
 
@@ -58,89 +56,86 @@ fetch(url).
             let div_cont = document.getElementById("data-container");
             div_cont.style.display = "block";
 
+            /**for the chart*/
+            let days = [];
+            let confirmed = [];
+
+            plot_covid();
+            function plot_covid() {
+                fetch(`https://api.covid19api.com/dayone/country/${data.data[country_list.value].location}/status/confirmed`).
+                    then(res => { return res.json() }).
+                    then(dataset => {
+
+                        for (let j = 0; j < dataset.length; j++) {
+                            days.push(dataset[j].Date.substr(0, 10))
+                            confirmed.push(parseInt(dataset[j].Cases));
+                        }
+                        var ctx = document.getElementById('myChart');
+                        my_chart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                datasets: [{
+                                    label: `${data.data[country_list.value].location} `,
+                                    data: confirmed,
+                                    backgroundColor: ["lime"]
+
+                                }],
+                                labels: days
+                            },
+                            options: {
 
 
-            map.addSource('maine', {
-                'type': 'geojson',
-                'data': {
-                    'type': 'Feature',
-                    'geometry': {
-                        'type': 'Polygon',
-                        'coordinates': [
-                            [
-                                [-67.13734351262877, 45.137451890638886],
-                                [-66.96466, 44.8097],
-                                [-68.03252, 44.3252],
-                                [-69.06, 43.98],
-                                [-70.11617, 43.68405],
-                                [-70.64573401557249, 43.090083319667144],
-                                [-70.75102474636725, 43.08003225358635],
-                                [-70.79761105007827, 43.21973948828747],
-                                [-70.98176001655037, 43.36789581966826],
-                                [-70.94416541205806, 43.46633942318431],
-                                [-71.08482, 45.3052400000002],
-                                [-70.6600225491012, 45.46022288673396],
-                                [-70.30495378282376, 45.914794623389355],
-                                [-70.00014034695016, 46.69317088478567],
-                                [-69.23708614772835, 47.44777598732787],
-                                [-68.90478084987546, 47.184794623394396],
-                                [-68.23430497910454, 47.35462921812177],
-                                [-67.79035274928509, 47.066248887716995],
-                                [-67.79141211614706, 45.702585354182816],
-                                [-67.13734351262877, 45.137451890638886]
-                            ]
-                        ]
-                    }
-                }
-            });
-            map.addLayer({
-                'id': 'maine',
-                'type': 'fill',
-                'source': 'maine',
-                'layout': {},
-                'paint': {
-                    'fill-color': 'red',
-                    'fill-opacity': 0.8
-                }
-            });
+                                    title: {
+                                        display: true,
+                                        fontSize: 30,
+                                        fontColor: "#ffffff",
+                                        text: `Active Cases in ${data.data[country_list.value].location} `
+                                    },
+                                
 
+                                scales: {
+                                    xAxes: [{
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                        scaleLabel: {
+                                            display: true,
+                                        },
+                                        ticks: {
+                                            fontColor: "#fff",
+                                            fontSize: 14
+                                        }
+                                    }],
+                                    yAxes: [{
+                                        scaleLabel: {
+                                            display: true,
+                                        },
+                                        ticks: {
+                                            fontColor: "#fff",
+                                            fontSize: 14
+                                        }
+                                    }]
+                                },
+                                responsive: true,
+                                maintainAspectRatio: false
+                            }
+                        });
+                    });
+            }
         }
-
-
         const totalData = data.data;
         totalData.forEach(element => {
-
             var el = document.createElement('div');
             el.className = 'marker';
             el.style.width = widthHeightBasedOnCases(element.dead);
             el.style.height = widthHeightBasedOnCases(element.dead);
             el.style.borderRadius = "50%";
+            el.style.border = "2pt solid lime"
             el.style.backgroundColor = colorBasedOnCases(element.dead);
-            el.style.opacity = "0.5"
-
+            el.style.opacity = "0.3";
 
             new mapboxgl.Marker(el).setLngLat([element.longitude, element.latitude]).addTo(map);
-
-            el.addEventListener("mouseover", showData);
-            el.addEventListener("mouseout", hideData);
-
+            //el.addEventListener("mouseover", showData);
+            // el.addEventListener("mouseout", hideData);
             function showData() {
-
                 let country = document.getElementById("card-country");
                 let cases = document.getElementById("cases");
                 let deaths = document.getElementById("deaths");
@@ -153,7 +148,6 @@ fetch(url).
                 deaths.innerHTML = element.dead;
                 percent.innerHTML = ((deaths.innerHTML / cases.innerHTML) * 100).toFixed(2);
 
-
                 let div_cont = document.getElementById("data-container");
                 div_cont.style.display = "block";
             }
@@ -162,51 +156,45 @@ fetch(url).
                 let div_cont = document.getElementById("data-container");
                 div_cont.style.display = "none";
             }
-
         });
-
     });
 
-
 function colorBasedOnCases(count) {
-    return "rgba(44, 251, 52, 0.8)";
+    return "#fff";
 }
-
 
 function widthHeightBasedOnCases(count) {
     if (count >= 50000) {
-        return "110px";
+        return "130px";
     }
     if (count >= 20000) {
-        return "60px";
+        return "80px";
     }
     if (count >= 10000) {
-        return "45px";
+        return "55px";
     }
     if (count >= 1000) {
-        return "25px";
+        return "35px";
     }
     if (count >= 10) {
-        return "10px";
+        return "20px";
     }
 }
-
-
 
 
 map.on('load', function () {
     map.setLayoutProperty('country-label', 'text-field', [
         'format',
-        ['get', 'name_en'],
-        { 'font-scale': 2 },
+        ['get'],
+        { 'font-scale': 1 },
         '\n',
         {},
         ['get', 'name'],
         {
-            'font-scale': 0.8,
+            'font-scale': 0.1,
             'text-font': [
                 'literal',
-                ['DIN Offc Pro Italic', 'Arial Unicode MS Regular']
+                ['Arial Unicode MS Regular']
             ]
         }
     ]);
@@ -217,9 +205,6 @@ map.on('load', function () {
 
 
 
-
-
-
-
-
+/**  borders
 // https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json
+*/

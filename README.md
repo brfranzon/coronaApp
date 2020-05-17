@@ -1,1 +1,1 @@
-# coronaApp
+# Anwendung für die Visualisierung von Koronadaten
