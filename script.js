@@ -36,7 +36,7 @@ fetch(url).
 
             map.fitBounds([
                 [data.data[country_list.value].longitude + 10, data.data[country_list.value].latitude + 10],
-                [data.data[country_list.value].longitude + 10, data.data[country_list.value].latitude - 10]
+                [data.data[country_list.value].longitude + 10.5, data.data[country_list.value].latitude - 10]
             ]);
 
 
